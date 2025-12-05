@@ -15,8 +15,8 @@ data class Order(
 
     val totalAmount: Double,
 
-    val status: String,
+    var status: String,
 
     @Column(name = "cancel_reason")
-    val cancelReason: String? = null
+    var cancelReason: String? = null
 ) : BaseEntity()

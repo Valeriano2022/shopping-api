@@ -4,6 +4,4 @@ data class UserResponse(
     val id: Long,
     val name: String,
     val email: String,
-    val createdAt: String,
-    val updatedAt: String
 )

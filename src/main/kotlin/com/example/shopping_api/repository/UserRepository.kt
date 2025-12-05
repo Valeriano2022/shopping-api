@@ -8,4 +8,5 @@ import java.awt.print.Pageable
 interface UserRepository : JpaRepository<User, Long>{
     fun findAll(pageable: Pageable): Page<User>
     fun findByEmail(email: String): User?
+    fun existsByEmail(email: String): Boolean
 }

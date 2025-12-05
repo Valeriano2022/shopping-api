@@ -1,14 +1,30 @@
 package com.example.shopping_api.mapper
 
+import com.example.shopping_api.dto.auth.LoginResponse
+import com.example.shopping_api.dto.auth.RegisterRequest
+import com.example.shopping_api.dto.auth.RegisterResponse
 import com.example.shopping_api.dto.user.UserResponse
 import com.example.shopping_api.model.User
 
 object UserMapper {
-    fun toResponse(user: User) = UserResponse(
-        id = user.id,
-        name = user.name,
-        email = user.email,
-        createdAt = user.createdAt.toString(),
-        updatedAt = user.updatedAt.toString()
+
+    fun toResponse(user: User) = RegisterResponse(
+        message = "Welcome to the shop ${user.name}!"
+    )
+
+    fun RegisterRequest.toEntity() = User(
+        name = this.name,
+        email = this.email,
+        password = this.password
+    )
+
+    fun toResponse(accessToken: String, refreshToken: String, user: User) = LoginResponse(
+        accessToken = accessToken,
+        refreshToken = refreshToken,
+        user = UserResponse(
+            id = user.id,
+            name = user.name,
+            email = user.email
+        )
     )
 }

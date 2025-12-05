@@ -31,11 +31,12 @@ class JwtUtil(
     }
 
 
-    fun generateRefreshToken(email: String): String {
+    fun generateRefreshToken(userId: Long, email: String): String {
         val now = Date()
         val expiryDate = Date(now.time + refreshExpiration)
         return Jwts.builder()
             .subject(email)
+            .claim("userId", userId)
             .issuedAt(now)
             .expiration(expiryDate)
             .signWith(key, Jwts.SIG.HS256)

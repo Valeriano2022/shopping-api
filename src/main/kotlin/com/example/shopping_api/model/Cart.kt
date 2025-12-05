@@ -11,5 +11,13 @@ data class Cart(
 
     @OneToOne
     @JoinColumn(name = "user_id", unique = true)
-    val user: User
+    val user: User,
+
+    @OneToMany(
+        mappedBy = "cart",
+        cascade = [CascadeType.ALL],
+        orphanRemoval = true,
+        fetch = FetchType.LAZY
+    )
+    var items: MutableList<CartItem> = mutableListOf()
 ) : BaseEntity()
