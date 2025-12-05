@@ -15,5 +15,5 @@ data class User(
     val email: String,
 
     @Column(name = "password_hash")
-    val passwordHash: String
+    val password: String
 ) : BaseEntity()
