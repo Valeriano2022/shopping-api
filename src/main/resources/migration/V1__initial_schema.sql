@@ -70,7 +70,7 @@ CREATE TABLE orders (
     user_id         BIGINT NOT NULL REFERENCES users(id),
     total_amount    DECIMAL(10,2) NOT NULL,
     status          VARCHAR(50) NOT NULL,
-
+    cancel_reason   TEXT
     created_at      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     created_by      BIGINT,
     updated_at      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
