@@ -22,6 +22,7 @@ CREATE TABLE products (
     description     TEXT,
     price           DECIMAL(10,2) NOT NULL,
     stock           INT NOT NULL DEFAULT 0,
+    photo_url       TEXT,
 
     created_at      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     created_by      BIGINT,
