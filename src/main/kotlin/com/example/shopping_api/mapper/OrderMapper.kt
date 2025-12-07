@@ -3,7 +3,9 @@ package com.example.shopping_api.mapper
 import com.example.shopping_api.dto.order.OrderResponse
 import com.example.shopping_api.model.Order
 import com.example.shopping_api.model.OrderItem
+import org.springframework.stereotype.Component
 
+@Component
 object OrderMapper {
     fun toResponse(order: Order, items: List<OrderItem>) = OrderResponse(
         id = order.id,

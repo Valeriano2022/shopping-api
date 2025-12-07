@@ -34,12 +34,8 @@ class SecurityConfig(
             .authorizeHttpRequests {
                 it
                     .requestMatchers(
-                        "/api/auth/login",
-                        "/api/auth/signup",
-                        "/api/auth/**",
-                        "/api/refresh",
-                        "/api/**",
-                        "/error"
+                        "/error",
+                        "/api/**"
                     ).permitAll()
                     .anyRequest().authenticated()
             }

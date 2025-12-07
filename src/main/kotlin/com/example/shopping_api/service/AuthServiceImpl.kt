@@ -10,6 +10,7 @@ import com.example.shopping_api.exception.InvalidRequestException
 import com.example.shopping_api.exception.TokenExpiredException
 import com.example.shopping_api.exception.TokenNotFound
 import com.example.shopping_api.exception.UserAlreadyLoggedIn
+import com.example.shopping_api.exception.UserNotFoundException
 import com.example.shopping_api.mapper.TokenMapper
 import com.example.shopping_api.mapper.UserMapper
 import com.example.shopping_api.mapper.UserMapper.toEntity
@@ -21,7 +22,10 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
+@Service
 class AuthServiceImpl(
     private val userRepository: UserRepository,
     private val userMapper: UserMapper,
@@ -30,11 +34,16 @@ class AuthServiceImpl(
     private val tokenRepository: RefreshTokenRepository,
     private val jwtUtil: JwtUtil
 ): AuthService {
+    @Transactional(rollbackFor = [Exception::class])
     override fun register(request: RegisterRequest): RegisterResponse {
         if (userRepository.existsByEmail(request.email))
             throw EmailAlreadyExistsException(request.email)
 
-        return userRepository.save(request.toEntity())
+        return userRepository.save(request
+            .copy(password = passwordEncoder
+                .encode(request.password)
+                .toString())
+            .toEntity())
             .let{userMapper.toResponse(it)}
     }
 
@@ -42,17 +51,11 @@ class AuthServiceImpl(
         request: LoginRequest,
         response: HttpServletResponse
     ): LoginResponse {
-        if(userRepository.existsByEmail(request.email))
-            throw EmailAlreadyExistsException(request.email)
-
-        if (!passwordEncoder.matches(
-                request.password,
-                request.password)
-            )
-            throw InvalidRequestException("Invalid credentials")
-
         val user = userRepository.findByEmail(request.email)
-            ?: throw InvalidRequestException("Invalid credentials")
+            ?: throw UserNotFoundException("${request.email} not found")
+
+        if (!passwordEncoder.matches(request.password, user.password))
+            throw InvalidRequestException("Invalid credentials")
 
         val activeToken = tokenRepository.findAllByUserAndExpiredIsFalseAndRevokedIsFalse(user)
 
@@ -86,7 +89,7 @@ class AuthServiceImpl(
         storedToken?.revoked = true
         storedToken?.expired = true
 
-        tokenRepository.save(storedToken)
+        tokenRepository.save(storedToken!!)
 
         SecurityContextHolder.clearContext()
 
@@ -98,7 +101,7 @@ class AuthServiceImpl(
         cookie.setAttribute("SameSite", "Lax")
         response.addCookie(cookie)
     }
-
+    @Transactional(rollbackFor = [Exception::class])
     override fun refresh(
         request: HttpServletRequest,
         response: HttpServletResponse

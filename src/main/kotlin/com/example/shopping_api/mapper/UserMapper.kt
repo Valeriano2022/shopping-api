@@ -5,7 +5,9 @@ import com.example.shopping_api.dto.auth.RegisterRequest
 import com.example.shopping_api.dto.auth.RegisterResponse
 import com.example.shopping_api.dto.user.UserResponse
 import com.example.shopping_api.model.User
+import org.springframework.stereotype.Component
 
+@Component
 object UserMapper {
 
     fun toResponse(user: User) = RegisterResponse(

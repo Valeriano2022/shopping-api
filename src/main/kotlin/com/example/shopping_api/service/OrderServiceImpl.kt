@@ -20,15 +20,16 @@ import com.example.shopping_api.repository.ProductRepository
 import com.example.shopping_api.repository.UserRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 
+@Service
 class OrderServiceImpl(
     private val cartRepository: CartRepository,
     private val cartItemRepository: CartItemRepository,
     private val orderRepository: OrderRepository,
     private val orderItemRepository: OrderItemRepository,
     private val userRepository: UserRepository,
-    private val productRepository: ProductRepository,
     private val orderMapper: OrderMapper
 ): OrderService {
     override fun createOrder(userId: Long, request: CheckOutRequest): OrderResponse {

@@ -2,7 +2,9 @@ package com.example.shopping_api.mapper
 
 import com.example.shopping_api.dto.product.ProductResponse
 import com.example.shopping_api.model.Product
+import org.springframework.stereotype.Component
 
+@Component
 object ProductMapper {
     fun toResponse(product: Product) = ProductResponse(
         id = product.id,

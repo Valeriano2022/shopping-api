@@ -14,7 +14,9 @@ import com.example.shopping_api.model.CartItem
 import com.example.shopping_api.repository.CartItemRepository
 import com.example.shopping_api.repository.CartRepository
 import com.example.shopping_api.repository.ProductRepository
+import org.springframework.stereotype.Service
 
+@Service
 class CartServiceImpl(
     private val cartRepository: CartRepository,
     private val cartMapper: CartMapper,
@@ -31,13 +33,13 @@ class CartServiceImpl(
 
     override fun add(
         userId: Long,
-        request: AddToCartRequest
+        request: AddToCartRequest?
     ): CartResponse {
 
         val cart = cartRepository.findByUserId(userId)
             ?: throw CartNotFoundException()
 
-        val product = productRepository.findById(request.productId)
+        val product = productRepository.findById(request?.productId!!)
             .orElseThrow { ProductNotFoundException() }
 
         val existingItem = cartItemRepository.findByCartIdAndProductId(cart.id, product.id)
@@ -64,13 +66,13 @@ class CartServiceImpl(
 
     override fun update(
         userId: Long,
-        request: UpdateCartItemRequest
+        request: UpdateCartItemRequest?
     ): CartItemResponse {
 
         val cart = cartRepository.findByUserId(userId)
             ?: throw CartNotFoundException()
 
-        val item = cartItemRepository.findById(request.cartItemId)
+        val item = cartItemRepository.findById(request?.cartItemId!!)
             .orElseThrow { CartItemNotFoundException() }
 
         if (item.cart.id != cart.id)
