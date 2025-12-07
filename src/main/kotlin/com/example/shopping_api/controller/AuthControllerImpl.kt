@@ -26,7 +26,7 @@ class AuthControllerImpl(
     override fun registerUser(@Valid @RequestBody request: RegisterRequest): ResponseEntity<RegisterResponse> {
         authService.register(request)
         return ResponseEntity.status(HttpStatus.CREATED)
-            .body(RegisterResponse("Registered successfully!"))
+            .build()
     }
     @PostMapping("/login")
     override fun loginUser(

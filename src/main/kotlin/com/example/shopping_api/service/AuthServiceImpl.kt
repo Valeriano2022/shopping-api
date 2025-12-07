@@ -74,7 +74,7 @@ class AuthServiceImpl(
         }
 
         response.addCookie(refreshCookie)
-        return userMapper.toResponse(accessToken, refreshToken, user)
+        return userMapper.toResponse(accessToken, user)
     }
 
     override fun logout(

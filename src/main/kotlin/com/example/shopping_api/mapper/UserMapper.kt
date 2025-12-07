@@ -11,7 +11,11 @@ import org.springframework.stereotype.Component
 object UserMapper {
 
     fun toResponse(user: User) = RegisterResponse(
-        message = "Welcome to the shop ${user.name}!"
+        user = UserResponse(
+            id = user.id,
+            email = user.email,
+            name = user.name,
+        ),
     )
 
     fun RegisterRequest.toEntity() = User(
@@ -20,9 +24,8 @@ object UserMapper {
         password = this.password
     )
 
-    fun toResponse(accessToken: String, refreshToken: String, user: User) = LoginResponse(
+    fun toResponse(accessToken: String, user: User) = LoginResponse(
         accessToken = accessToken,
-        refreshToken = refreshToken,
         user = UserResponse(
             id = user.id,
             name = user.name,
