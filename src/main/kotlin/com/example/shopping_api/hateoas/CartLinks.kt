@@ -1,6 +1,6 @@
 package com.example.shopping_api.hateoas
 
-import com.example.shopping_api.controller.CartController
+import com.example.shopping_api.controller.CartControllerImpl
 import com.example.shopping_api.dto.cart.AddToCartRequest
 import com.example.shopping_api.dto.cart.UpdateCartItemRequest
 import org.springframework.hateoas.EntityModel
@@ -19,27 +19,27 @@ class CartLinks {
         quantity = 0
     )
     fun self(): Link =
-        linkTo(methodOn(CartController::class.java).getCart(null))
+        linkTo(methodOn(CartControllerImpl::class.java).getCart(null))
             .withSelfRel()
 
     fun addItem(): Link =
-        linkTo(methodOn(CartController::class.java).addToCart(null, dummyRequest))
+        linkTo(methodOn(CartControllerImpl::class.java).addToCart(null, dummyRequest))
             .withRel("add")
 
     fun clear(): Link =
-        linkTo(methodOn(CartController::class.java).clearCart(null))
+        linkTo(methodOn(CartControllerImpl::class.java).clearCart(null))
             .withRel("clear")
 
     fun removeItem(cartItemId: Long): Link =
-        linkTo(methodOn(CartController::class.java).removeCartItem(null, cartItemId))
+        linkTo(methodOn(CartControllerImpl::class.java).removeCartItem(null, cartItemId))
             .withRel("remove-item")
 
     fun updateItem(cartItemId: Long): Link =
-        linkTo(methodOn(CartController::class.java).updateCartItem(null, cartItemId, dummyUpdateRequest))
+        linkTo(methodOn(CartControllerImpl::class.java).updateCartItem(null, cartItemId, dummyUpdateRequest))
             .withRel("update-item")
 
     fun removeByProduct(productId: Long): Link =
-        linkTo(methodOn(CartController::class.java).removeByProduct(null, productId))
+        linkTo(methodOn(CartControllerImpl::class.java).removeByProduct(null, productId))
             .withRel("remove-by-product")
 
     fun <T : Any> addToCartResource(model: EntityModel<T>, cartItemId: Long?, productId: Long?): EntityModel<T> {

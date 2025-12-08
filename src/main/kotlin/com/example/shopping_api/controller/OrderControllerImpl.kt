@@ -1,5 +1,6 @@
 package com.example.shopping_api.controller
 
+import com.example.shopping_api.dto.order.CancelOrderRequest
 import com.example.shopping_api.dto.order.CheckOutRequest
 import com.example.shopping_api.dto.order.OrderResponse
 import com.example.shopping_api.hateoas.OrderLinks
@@ -32,14 +33,14 @@ class OrderControllerImpl(
         val order = orderService.createOrder(principal.userId, request)
         val resource = orderLinks.addTo(EntityModel.of(order), order.id)
         return ResponseEntity.created(
-            linkTo(methodOn(OrderController::class.java).getOrder(null, order.id)).toUri()
+            linkTo(methodOn(OrderControllerImpl::class.java).getOrder(null, order.id)).toUri()
         ).body(resource)
     }
 
-    @GetMapping("/{orderId}")
+    @GetMapping("/{id}")
     override fun getOrder(
         auth: Authentication?,
-        @PathVariable orderId: Long
+        @PathVariable("id") orderId: Long
     ): ResponseEntity<EntityModel<OrderResponse>> {
         val principal = auth?.principal as CustomUserPrincipal
         val order = orderService.getOrder(principal.userId, orderId)
@@ -60,13 +61,14 @@ class OrderControllerImpl(
         return ResponseEntity.ok(model)
     }
 
-    @PatchMapping("/{orderId}/cancel")
+    @PatchMapping("/{id}/cancel")
     override fun cancelOrder(
         auth: Authentication?,
-        @PathVariable orderId: Long
+        @PathVariable("id") orderId: Long,
+        reason: CancelOrderRequest
     ): ResponseEntity<EntityModel<OrderResponse>> {
         val principal = auth?.principal as CustomUserPrincipal
-        val order = orderService.cancelOrder(principal.userId, orderId)
+        val order = orderService.cancelOrder(principal.userId, orderId, reason)
         val resource = orderLinks.addTo(EntityModel.of(order), orderId)
         return ResponseEntity.ok(resource)
     }

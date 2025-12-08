@@ -1,6 +1,7 @@
 package com.example.shopping_api.hateoas
 
-import com.example.shopping_api.controller.OrderController
+import com.example.shopping_api.controller.OrderControllerImpl
+import com.example.shopping_api.dto.order.CancelOrderRequest
 import com.example.shopping_api.dto.order.CheckOutRequest
 import org.springframework.data.domain.PageRequest
 import org.springframework.hateoas.EntityModel
@@ -14,19 +15,19 @@ class OrderLinks {
     val dummyPageable = PageRequest.of(0, 10)
 
     fun self(orderId: Long): Link =
-        linkTo(methodOn(OrderController::class.java).getOrder(null, orderId))
+        linkTo(methodOn(OrderControllerImpl::class.java).getOrder(null, orderId))
             .withSelfRel()
 
     fun cancel(orderId: Long): Link =
-        linkTo(methodOn(OrderController::class.java).cancelOrder(null, orderId))
+        linkTo(methodOn(OrderControllerImpl::class.java).cancelOrder(null, orderId, CancelOrderRequest(null)))
             .withRel("cancel")
 
     fun list(): Link =
-        linkTo(methodOn(OrderController::class.java).getOrders(null, dummyPageable))
+        linkTo(methodOn(OrderControllerImpl::class.java).getOrders(null, dummyPageable))
             .withRel("orders")
 
     fun create(): Link =
-        linkTo(methodOn(OrderController::class.java).createOrder(null, dummyRequest))
+        linkTo(methodOn(OrderControllerImpl::class.java).createOrder(null, dummyRequest))
             .withRel("create")
 
     fun <T : Any> addTo(model: EntityModel<T>, orderId: Long): EntityModel<T> =

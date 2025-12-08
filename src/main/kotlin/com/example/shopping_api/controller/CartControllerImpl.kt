@@ -4,6 +4,7 @@ import com.example.shopping_api.dto.cart.AddToCartRequest
 import com.example.shopping_api.dto.cart.CartItemResponse
 import com.example.shopping_api.dto.cart.CartResponse
 import com.example.shopping_api.dto.cart.UpdateCartItemRequest
+import com.example.shopping_api.exception.UnauthorizedOperationException
 import com.example.shopping_api.hateoas.CartLinks
 import com.example.shopping_api.security.CustomUserPrincipal
 import com.example.shopping_api.service.CartService
@@ -23,7 +24,9 @@ class CartControllerImpl(
 
     @GetMapping
     override fun getCart(auth: Authentication?): ResponseEntity<EntityModel<CartResponse>> {
-        val principal = auth?.principal as CustomUserPrincipal
+        val principal = auth?.principal
+                as? CustomUserPrincipal
+            ?: throw UnauthorizedOperationException("Not authenticated")
         val cart = cartService.getCart(principal.userId)
         val resource = cartLinks.addToCartResource(
             model = EntityModel.of(cart),

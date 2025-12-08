@@ -13,6 +13,7 @@ data class Order(
     @JoinColumn(name = "user_id")
     val user: User,
 
+    @Column(name = "total_amount")
     val totalAmount: Double,
 
     var status: String,

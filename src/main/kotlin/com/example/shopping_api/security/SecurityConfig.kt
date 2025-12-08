@@ -35,12 +35,20 @@ class SecurityConfig(
                 it
                     .requestMatchers(
                         "/error",
-                        "/api/**"
+                        "/api/auth/login",
+                        "/api/auth/register",
+                        "/api/auth/refresh",
+                        "/api/products"
                     ).permitAll()
-                    .anyRequest().authenticated()
+                    .requestMatchers(
+                        "/api/cart/**",
+                        "/api/orders/**",
+                        "/api/products/**"
+                    ).permitAll().anyRequest().authenticated()
             }
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter::class.java)
 
         return http.build()
     }
+
 }

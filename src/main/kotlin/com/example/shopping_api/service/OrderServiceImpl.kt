@@ -1,5 +1,6 @@
 package com.example.shopping_api.service
 
+import com.example.shopping_api.dto.order.CancelOrderRequest
 import com.example.shopping_api.dto.order.CheckOutRequest
 import com.example.shopping_api.dto.order.OrderResponse
 import com.example.shopping_api.exception.CartNotFoundException
@@ -21,6 +22,7 @@ import com.example.shopping_api.repository.UserRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 
 @Service
@@ -32,6 +34,7 @@ class OrderServiceImpl(
     private val userRepository: UserRepository,
     private val orderMapper: OrderMapper
 ): OrderService {
+    @Transactional(rollbackFor = [Throwable::class])
     override fun createOrder(userId: Long, request: CheckOutRequest): OrderResponse {
         val user = userRepository.findById(userId)
             .orElseThrow { UserNotFoundException() }
@@ -70,7 +73,7 @@ class OrderServiceImpl(
         return orderMapper.toResponse(order, orderItems)
     }
 
-
+    @Transactional(rollbackFor = [Throwable::class])
     override fun getOrders(userId: Long, pageable: Pageable): Page<OrderResponse> {
         val orders = orderRepository.findByUserId(userId, pageable)
 
@@ -91,8 +94,8 @@ class OrderServiceImpl(
 
         return OrderMapper.toResponse(order, items)
     }
-
-    override fun cancelOrder(userId: Long, orderId: Long): OrderResponse {
+    @Transactional(rollbackFor = [Throwable::class])
+    override fun cancelOrder(userId: Long, orderId: Long, reason: CancelOrderRequest): OrderResponse {
         val order = orderRepository.findById(orderId)
             .orElseThrow { OrderNotFoundException() }
 
@@ -104,11 +107,11 @@ class OrderServiceImpl(
 
         val sevenDaysAgo = LocalDateTime.now().minusDays(7)
 
-        if (order.createdAt.isBefore(sevenDaysAgo).not())
+        if (order.createdAt.isBefore(sevenDaysAgo))
             throw OrderCancellationNotAllowedException()
 
         order.status = "CANCELLED"
-        order.cancelReason = "Cancelled by user"
+        order.cancelReason = reason.reason
 
         val saved = orderRepository.save(order)
         val items = orderItemRepository.findByOrderId(order.id)

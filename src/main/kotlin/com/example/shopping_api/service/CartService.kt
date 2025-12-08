@@ -7,7 +7,7 @@ import com.example.shopping_api.dto.cart.UpdateCartItemRequest
 
 interface CartService {
     fun getCart(userId: Long): CartResponse
-    fun add(userId: Long, request: AddToCartRequest?): CartResponse
+    fun add(userId: Long, request: AddToCartRequest): CartResponse
     fun update(userId: Long, request: UpdateCartItemRequest?): CartItemResponse
     fun remove(userId: Long, cartItemId: Long)
     fun removeByProduct(userId: Long, productId: Long)

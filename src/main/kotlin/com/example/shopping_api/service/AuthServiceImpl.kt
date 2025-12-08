@@ -14,6 +14,7 @@ import com.example.shopping_api.exception.UserNotFoundException
 import com.example.shopping_api.mapper.TokenMapper
 import com.example.shopping_api.mapper.UserMapper
 import com.example.shopping_api.mapper.UserMapper.toEntity
+import com.example.shopping_api.model.RefreshToken
 import com.example.shopping_api.repository.RefreshTokenRepository
 import com.example.shopping_api.repository.UserRepository
 import com.example.shopping_api.security.JwtUtil
@@ -63,6 +64,12 @@ class AuthServiceImpl(
             throw UserAlreadyLoggedIn(user.id)
 
         val refreshToken = jwtUtil.generateRefreshToken(user.id, user.email)
+        val token = RefreshToken(
+            token = refreshToken,
+            user = user
+        )
+        tokenRepository.save(token)
+
         val accessToken = jwtUtil.generateAccessToken(user.id, user.email)
 
         val refreshCookie = Cookie("refreshToken", refreshToken).apply {

@@ -18,6 +18,7 @@ data class OrderItem(
     val product: Product,
 
     val quantity: Int,
+    @Column(name = "price_at_purchase")
     val priceAtPurchase: Double,
     val subtotal: Double
 ) : BaseEntity()

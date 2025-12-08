@@ -15,6 +15,7 @@ import com.example.shopping_api.repository.CartItemRepository
 import com.example.shopping_api.repository.CartRepository
 import com.example.shopping_api.repository.ProductRepository
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class CartServiceImpl(
@@ -24,22 +25,23 @@ class CartServiceImpl(
     private val productRepository: ProductRepository,
     private val cartItemRepository: CartItemRepository
 ): CartService {
+    @Transactional(readOnly = true)
     override fun getCart(userId: Long): CartResponse {
         val cart = cartRepository.findByUserId(userId)
             ?: throw CartNotFoundException()
         val items = cart.items
         return cartMapper.toResponse(cart, items)
     }
-
+    @Transactional(rollbackFor = [Throwable::class])
     override fun add(
         userId: Long,
-        request: AddToCartRequest?
+        request: AddToCartRequest
     ): CartResponse {
 
         val cart = cartRepository.findByUserId(userId)
             ?: throw CartNotFoundException()
 
-        val product = productRepository.findById(request?.productId!!)
+        val product = productRepository.findById(request.productId)
             .orElseThrow { ProductNotFoundException() }
 
         val existingItem = cartItemRepository.findByCartIdAndProductId(cart.id, product.id)
@@ -63,7 +65,7 @@ class CartServiceImpl(
         return cartMapper.toResponse(cart, updatedItems)
     }
 
-
+    @Transactional(rollbackFor = [Throwable::class])
     override fun update(
         userId: Long,
         request: UpdateCartItemRequest?
@@ -90,7 +92,7 @@ class CartServiceImpl(
         return cartItemMapper.toResponse(updatedItem)
     }
 
-
+    @Transactional(rollbackFor = [Throwable::class])
     override fun remove(userId: Long, cartItemId: Long) {
         val cart = cartRepository.findByUserId(userId)
             ?: throw CartNotFoundException()
@@ -103,7 +105,7 @@ class CartServiceImpl(
 
         cartItemRepository.delete(item)
     }
-
+    @Transactional(rollbackFor = [Throwable::class])
     override fun removeByProduct(userId: Long, productId: Long) {
         val cart = cartRepository.findByUserId(userId)
             ?: throw CartNotFoundException()
@@ -117,6 +119,7 @@ class CartServiceImpl(
         cartItemRepository.delete(cartItem)
     }
 
+    @Transactional(rollbackFor = [Throwable::class])
     override fun clear(userId: Long) {
         val cart = cartRepository.findByUserId(userId)
             ?: throw CartNotFoundException()

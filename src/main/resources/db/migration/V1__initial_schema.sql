@@ -1,6 +1,3 @@
--- ==========================
--- USERS
--- ==========================
 CREATE TABLE users (
     id              BIGSERIAL PRIMARY KEY,
     name            VARCHAR(255) NOT NULL,
@@ -12,9 +9,6 @@ CREATE TABLE users (
     updated_by      BIGINT
 );
 
--- ==========================
--- PRODUCTS
--- ==========================
 CREATE TABLE products (
     id              BIGSERIAL PRIMARY KEY,
     name            VARCHAR(255) NOT NULL,
@@ -27,10 +21,6 @@ CREATE TABLE products (
     updated_at      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_by      BIGINT
 );
-
--- ==========================
--- CARTS
--- ==========================
 CREATE TABLE carts (
     id BIGSERIAL PRIMARY KEY,
     user_id BIGINT NOT NULL UNIQUE,
@@ -43,9 +33,6 @@ CREATE TABLE carts (
         ON DELETE CASCADE
 );
 
--- ==========================
--- CART ITEMS
--- ==========================
 CREATE TABLE cart_items (
     id BIGSERIAL PRIMARY KEY,
     cart_id BIGINT NOT NULL,
@@ -66,9 +53,6 @@ CREATE TABLE cart_items (
 -- For one product per cart row
 CREATE UNIQUE INDEX ux_cart_item_unique ON cart_items(cart_id, product_id);
 
--- ==========================
--- ORDERS
--- ==========================
 CREATE TABLE orders (
     id              BIGSERIAL PRIMARY KEY,
     user_id         BIGINT NOT NULL REFERENCES users(id),
@@ -81,9 +65,6 @@ CREATE TABLE orders (
     updated_by      BIGINT
 );
 
--- ==========================
--- ORDER ITEMS
--- ==========================
 CREATE TABLE order_items (
     id                BIGSERIAL PRIMARY KEY,
     order_id          BIGINT NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
@@ -98,7 +79,7 @@ CREATE TABLE order_items (
 );
 
 CREATE TABLE tokens (
-    token_id BIGSERIAL PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     version BIGINT DEFAULT 0 NOT NULL,
     token VARCHAR(512) UNIQUE NOT NULL,
     expired BOOLEAN DEFAULT FALSE NOT NULL,
@@ -108,7 +89,9 @@ CREATE TABLE tokens (
         REFERENCES users (id)
         ON DELETE CASCADE,
     created_at TIMESTAMP,
-    created_by BIGINT
+    created_by BIGINT,
+    updated_at TIMESTAMP,
+    updated_by BIGINT
 );
 
 -- Improve lookup speed
